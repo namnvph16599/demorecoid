@@ -1,25 +1,45 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import {
+  RecoilRoot,
+  atom,
+  selector,
+  useRecoilState,
+  useRecoilValue,
+} from "recoil";
 
-function App() {
+const countState = atom({
+  key: "countState",
+  default: 0,
+});
+
+const countNextState = selector({
+  key: "counterNextState",
+  get: ({ get }) => {
+    return get(countState) + 1;
+  },
+});
+
+const Counter = () => {
+  const [count, setCount] = useRecoilState(countState);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h2>{count}</h2>
+      <button onClick={() => setCount(count + 1)}>Click me</button>
     </div>
   );
-}
+};
 
-export default App;
+const CounterInfo = () => {
+  const count = useRecoilValue(countNextState);
+  return <p>the next number is {count}</p>;
+};
+
+export default function App() {
+  return (
+    <RecoilRoot>
+      <h1>Recoil counter</h1>
+      <Counter />
+      <CounterInfo />
+    </RecoilRoot>
+  );
+}
